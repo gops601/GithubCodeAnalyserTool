@@ -7,7 +7,7 @@ FROM python:3.10-slim
 # curl/unzip: for downloading the scanner
 RUN apt-get update && apt-get install -y \
     git \
-    default-jre-headless \
+    openjdk-21-jre-headless \
     curl \
     unzip \
     && rm -rf /var/lib/apt/lists/*
