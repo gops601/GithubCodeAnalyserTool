@@ -9,7 +9,7 @@ load_dotenv()
 def create_app():
     app = Flask(__name__)
     
-    # Configuration
+    # Configuration with server defaults
     db_host = os.getenv('DB_HOST', 'mysql-db')
     db_user = os.getenv('DB_USER', 'root')
     db_pass = os.getenv('DB_PASSWORD', 'Admin123')

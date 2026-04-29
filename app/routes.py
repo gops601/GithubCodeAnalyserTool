@@ -9,7 +9,8 @@ bp = Blueprint('main', __name__)
 @bp.route('/')
 def index():
     batches = Batch.query.order_by(Batch.created_at.desc()).all()
-    sonar_host = os.getenv('SONAR_HOST_URL', 'http://localhost:9000') or 'http://localhost:9000'
+    # Defaulting to the server's IP for SonarQube
+    sonar_host = os.getenv('SONAR_HOST_URL', 'http://187.127.142.34:9000') or 'http://187.127.142.34:9000'
     sonar_url_base = sonar_host.rstrip('/')
     return render_template('index.html', batches=batches, sonar_url_base=sonar_url_base)
 
@@ -55,8 +56,8 @@ def submit():
 
     # 4. Trigger automated analysis in background
     sonar_config = {
-        'host_url': os.getenv('SONAR_HOST_URL'),
-        'token': os.getenv('SONAR_TOKEN'),
+        'host_url': os.getenv('SONAR_HOST_URL', 'http://187.127.142.34:9000'),
+        'token': os.getenv('SONAR_TOKEN', 'sqa_6f54316972740263889601d944e597c55c78601d'), # Defaulting to your known token
         'project_name': display_name
     }
     
