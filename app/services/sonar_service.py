@@ -35,6 +35,7 @@ class SonarService:
                 f"-Dsonar.sources=.",
                 f"-Dsonar.host.url={self.host_url}",
                 f"-Dsonar.login={self.token}",
+                f"-Dsonar.token={self.token}", # Required for newer squ_ tokens
                 "-Dsonar.scm.disabled=true",
                 "-Dsonar.sourceEncoding=UTF-8",
                 "-Dsonar.exclusions=**/node_modules/**,**/venv/**,**/env/**,**/.git/**,**/target/**,**/dist/**,**/build/**"

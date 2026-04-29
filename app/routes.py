@@ -57,7 +57,7 @@ def submit():
     # 4. Trigger automated analysis in background
     sonar_config = {
         'host_url': os.getenv('SONAR_HOST_URL', 'http://187.127.142.34:9000'),
-        'token': os.getenv('SONAR_TOKEN', 'sqa_6f54316972740263889601d944e597c55c78601d'), # Defaulting to your known token
+        'token': os.getenv('SONAR_TOKEN', 'squ_a59d4fc58ecbab4929240640afa96a317bfd9a12'), # Updated with your correct token
         'project_name': display_name
     }
     
