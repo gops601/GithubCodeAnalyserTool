@@ -28,7 +28,6 @@ class SonarService:
             print(f"Running automated sonar-scanner for {project_key}...")
             
             # Command to run sonar-scanner
-            # We pass parameters via command line for maximum automation
             command = [
                 scanner_exe,
                 f"-Dsonar.projectKey={project_key}",
@@ -38,16 +37,24 @@ class SonarService:
                 f"-Dsonar.login={self.token}",
                 "-Dsonar.scm.disabled=true",
                 "-Dsonar.sourceEncoding=UTF-8",
-                # Universal exclusions for performance and compatibility (MERN, Python, etc.)
                 "-Dsonar.exclusions=**/node_modules/**,**/venv/**,**/env/**,**/.git/**,**/target/**,**/dist/**,**/build/**"
             ]
+
+            # If an organization is provided in environment, add it (required for SonarCloud)
+            org = os.getenv('SONAR_ORGANIZATION')
+            if org:
+                command.append(f"-Dsonar.organization={org}")
+            
+            # On Linux (Docker), we should NOT use shell=True with a list.
+            # On Windows, we need shell=True for .bat files.
+            use_shell = os.name == 'nt'
             
             result = subprocess.run(
                 command,
                 cwd=source_dir,
                 capture_output=True,
                 text=True,
-                shell=True # Required for .bat files on Windows
+                shell=use_shell
             )
             
             if result.returncode != 0:
