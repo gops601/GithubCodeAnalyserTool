@@ -69,11 +69,15 @@ def get_status(repo_id):
     repo = Repository.query.get_or_404(repo_id)
     result = repo.results[-1] if repo.results else None
     
+    sonar_host = os.getenv('SONAR_HOST_URL', 'http://localhost:9000')
+    if not sonar_host:
+        sonar_host = 'http://localhost:9000'
+    
     data = {
         "status": repo.status,
         "error": repo.error_message,
         "project_key": repo.project_key,
-        "sonar_url": f"{os.getenv('SONAR_HOST_URL').rstrip('/')}/dashboard?id={repo.project_key}"
+        "sonar_url": f"{sonar_host.rstrip('/')}/dashboard?id={repo.project_key}"
     }
     
     if result:

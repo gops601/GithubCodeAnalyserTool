@@ -32,8 +32,13 @@ def create_app():
     db.init_app(app)
 
     with app.app_context():
+        try:
+            db.create_all()
+        except Exception as e:
+            # Ignore errors about tables existing (happens in multi-worker startups)
+            if 'already exists' not in str(e).lower():
+                print(f"Database initialization error: {e}")
         from app import routes
         app.register_blueprint(routes.bp)
-        db.create_all()
 
     return app
