@@ -10,7 +10,7 @@ def create_app():
     app = Flask(__name__)
     
     # Configuration
-    db_host = os.getenv('DB_HOST', 'localhost')
+    db_host = os.getenv('DB_HOST', 'mysql-db')
     db_user = os.getenv('DB_USER', 'root')
     db_pass = os.getenv('DB_PASSWORD', 'Admin123')
     db_name = os.getenv('DB_NAME', 'sonar_devops')
