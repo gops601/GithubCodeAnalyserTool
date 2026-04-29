@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv
+venv/
+ENV/
+env/
+
+# Environment variables (CRITICAL: Do not commit sensitive data)
+.env
+
+# Database
+*.sqlite3
+*.db
+
+# Application specific
+tools/
+temp_repos/
+sonar_scan_*
+
+# IDEs
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

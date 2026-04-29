@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICTAK Code Analysis Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ICTAK Code Analysis Tool</h1>
+            <p>Automated SonarQube Analysis for Multi-Stack Projects</p>
+        </header>
+
+        <section class="submission-card">
+            <form action="{{ url_for('main.submit') }}" method="POST">
+                <div class="form-layout">
+                    <div class="input-group">
+                        <label for="repo_url">GitHub Repository URL (Public)</label>
+                        <input type="url" id="repo_url" name="repo_url" placeholder="https://github.com/user/repo" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="batch_name">Batch Name</label>
+                        <input type="text" id="batch_name" name="batch_name" placeholder="e.g. Project-X-Phase-1" required>
+                    </div>
+                    <div class="action-buttons">
+                        <button type="submit" class="submit-btn" id="analyse-btn">Analyse</button>
+                        <button type="button" id="clear-ui-btn" class="clear-btn">Clear View</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <section id="batches-container">
+            {% for batch in batches %}
+            <div class="batch-section" data-batch-id="{{ batch.id }}">
+                <div class="batch-header">
+                    <h2>{{ batch.name }}</h2>
+                    <span class="text-muted">{{ batch.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+                <div class="repo-grid">
+                    {% for repo in batch.repositories %}
+                    <div class="repo-card" id="repo-{{ repo.id }}" data-status="{{ repo.status }}">
+                        <div class="repo-header">
+                            <div class="repo-url">{{ repo.url }}</div>
+                            <div class="status-badge status-{{ repo.status.lower() }}">{{ repo.status }}</div>
+                        </div>
+                        
+                        <div class="repo-footer">
+                            <span class="project-key">{{ repo.project_key }}</span>
+                            <a href="http://187.127.142.34:5010/?id={{ repo.project_key }}" target="_blank" class="sonar-link">View Analysis Report &rarr;</a>
+                        </div>
+
+                        {% if repo.status == 'Failed' and repo.error_message %}
+                        <div class="error-msg">
+                            <strong>Error:</strong> {{ repo.error_message }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+    </div>
+
+    <script>
+        // Auto-refresh logic for Pending and Running repos
+        async function updateStatus() {
+            const cards = document.querySelectorAll('.repo-card[data-status="Pending"], .repo-card[data-status="Running"]');
+            
+            for (const card of cards) {
+                const repoId = card.id.replace('repo-', '');
+                try {
+                    const response = await fetch(`/api/status/${repoId}`);
+                    const data = await response.json();
+                    
+                    if (data.status !== card.dataset.status) {
+                        // Refresh the page if status changed to show new metrics
+                        window.location.reload();
+                    }
+                } catch (e) {
+                    console.error('Failed to update status', e);
+                }
+            }
+        }
+
+        // Poll every 5 seconds
+        setInterval(updateStatus, 5000);
+
+        // Loading state for the analyse button
+        document.querySelector('form').addEventListener('submit', function() {
+            const btn = document.getElementById('analyse-btn');
+            btn.innerText = 'Triggering...';
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+        });
+
+        // Clear UI entries without deleting from DB
+        document.getElementById('clear-ui-btn').addEventListener('click', function() {
+            const container = document.getElementById('batches-container');
+            container.innerHTML = '<div class="text-muted" style="text-align: center; padding: 2rem;">Dashboard cleared. New analyses will appear here.</div>';
+        });
+    </script>
+</body>
+</html>
