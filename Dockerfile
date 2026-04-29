@@ -15,12 +15,11 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Download and install Sonar-Scanner CLI
-# We pre-install it in the Docker image for faster cloud execution
-RUN curl -o /tmp/sonar-scanner.zip -L https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-linux-x64.zip && \
+# Download and install Sonar-Scanner CLI (Stable version 5.0.1)
+RUN curl -o /tmp/sonar-scanner.zip -L https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip && \
     unzip /tmp/sonar-scanner.zip -d /opt && \
     rm /tmp/sonar-scanner.zip && \
-    mv /opt/sonar-scanner-6.2.1.4610-linux-x64 /opt/sonar-scanner
+    mv /opt/sonar-scanner-5.0.1.3006-linux /opt/sonar-scanner
 
 # Add sonar-scanner to PATH
 ENV PATH="/opt/sonar-scanner/bin:${PATH}"
