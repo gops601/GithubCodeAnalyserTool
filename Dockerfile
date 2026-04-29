@@ -40,5 +40,5 @@ ENV FLASK_APP=run.py
 ENV FLASK_ENV=production
 
 # Run the application with Gunicorn
-# Using 4 workers for better performance in cloud
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "run:app"]
+# Using 4 workers and increased timeout for stability
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--timeout", "120", "run:app"]

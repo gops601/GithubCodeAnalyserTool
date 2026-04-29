@@ -7,8 +7,9 @@ from app.services.tooling_service import ToolingService
 
 class SonarService:
     def __init__(self, host_url, token):
-        self.host_url = host_url.rstrip('/')
-        self.token = token
+        # Fallback for missing host_url to prevent crash
+        self.host_url = (host_url or "http://localhost:9000").rstrip('/')
+        self.token = token or ""
 
     def run_analysis(self, project_key, project_name, source_dir):
         """Runs sonar-scanner CLI on the source directory."""

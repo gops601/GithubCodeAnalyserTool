@@ -9,7 +9,8 @@ bp = Blueprint('main', __name__)
 @bp.route('/')
 def index():
     batches = Batch.query.order_by(Batch.created_at.desc()).all()
-    sonar_url_base = os.getenv('SONAR_HOST_URL', '').rstrip('/')
+    sonar_host = os.getenv('SONAR_HOST_URL', 'http://localhost:9000') or 'http://localhost:9000'
+    sonar_url_base = sonar_host.rstrip('/')
     return render_template('index.html', batches=batches, sonar_url_base=sonar_url_base)
 
 @bp.route('/submit', methods=['POST'])
